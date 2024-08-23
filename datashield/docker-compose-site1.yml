@@ -1,0 +1,37 @@
+version: '3'
+services:
+  opal1:
+    image: obiba/opal:latest
+    ports:
+      - "8844:8443"
+      - "8880:8080"
+    links:
+      - rock1
+      - mongo1
+      - mysqldata1
+    environment:
+      - JAVA_OPTS=-Xms1G -Xmx8G -XX:+UseG1GC
+      - OPAL_ADMINISTRATOR_PASSWORD=password
+      - MONGO_HOST=mongo1
+      - MONGO_PORT=27017
+      - MYSQLDATA_HOST=mysqldata1
+      - MYSQLDATA_USER=opal
+      - MYSQLDATA_PASSWORD=password
+      - ROCK_HOSTS=rock1:8085
+    volumes:
+      - ./opal1:/srv
+  mongo1:
+    image: mongo:4.2
+  mysqldata1:
+    image: mysql:5
+    environment:
+      - MYSQL_DATABASE=opal
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=opal
+      - MYSQL_PASSWORD=password
+  rock1:
+    image: datashield/rock-base:latest
+    volumes:
+      - ./data1:/srv
+
+

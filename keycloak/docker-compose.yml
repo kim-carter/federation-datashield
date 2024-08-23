@@ -1,0 +1,47 @@
+version: '3'
+
+volumes:
+  keycloak-db-data:
+    driver: local
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: unless-stopped
+    volumes:
+      - keycloak-db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRESQL_DB}
+      POSTGRES_USER: ${POSTGRESQL_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - local-keycloak
+  keycloak:
+    build: .
+    container_name: keycloak
+    environment:
+      KC_HOSTNAME: localhost
+      KC_HEALTH_ENABLED: true
+      KC_METRICS_ENABLED: true
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false      
+      PROXY_ADDRESS_FORWARDING: true
+      KC_DB_USERNAME: ${KC_DB_USERNAME}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB_URL: 'jdbc:postgresql://postgres/keycloak'
+    command:
+      - "-v start --optimized"
+    ports:
+      - 8443:9443
+      - 9080:9080
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    networks:
+      - local-keycloak
+
+networks:
+  local-keycloak:
