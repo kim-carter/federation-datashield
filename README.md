@@ -41,5 +41,5 @@ Or just:
 # docker run -network="host" -it rdocker:latest R
 ```
 
-Run the command above to open an R console in a separate terminal window.   Paste in the code from [R/SetupServers.R](R/ClientQuery.R) line by line or block.
+Run the command above to open an R console in a separate terminal window.   Paste in the code from [R/ClientQuery.R](R/ClientQuery.R) line by line or block.
 
